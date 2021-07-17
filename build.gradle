@@ -4,11 +4,10 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.20'
-    id 'application'
 }
 
 group 'org.vladkanash'
-version '1.0-SNAPSHOT'
+version '0.0.1'
 
 repositories {
     mavenCentral()
@@ -24,6 +23,10 @@ dependencies {
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
 
-application {
-    mainClass = 'org.vladkanash.MainKt'
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.vladkanash.MainKt'
+    }
+
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }
