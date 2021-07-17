@@ -4,7 +4,7 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.text
 import com.github.kotlintelegrambot.entities.ChatId
-import com.github.kotlintelegrambot.entities.ParseMode.MARKDOWN_V2
+import com.github.kotlintelegrambot.entities.ParseMode.MARKDOWN
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ fun main() {
                 bot.sendMessage(
                     ChatId.fromId(chatId.toLong()),
                     text = getMessage(getDaysPassed(lastMessageDate), lastMessage),
-                    parseMode = MARKDOWN_V2
+                    parseMode = MARKDOWN
                 )
             }
             delay(Duration.days(1))
@@ -56,5 +56,5 @@ private fun getDaysPassed(date: LocalDate) = DAYS.between(date, now())
 
 private fun getMessage(days: Long, lastMessage: String) = """
     Прошло уже $days дней с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
-    Его последними словами были: *”$lastMessage”*
+    Его последними словами были: _”$lastMessage”_
 """.trimIndent()
