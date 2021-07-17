@@ -55,6 +55,6 @@ fun main() {
 private fun getDaysPassed(date: LocalDate) = DAYS.between(date, now())
 
 private fun getMessage(days: Long, lastMessage: String) = """
-    Прошло уже $days дней с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
+    Прошло уже *$days* дней с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
     Его последними словами были: _”$lastMessage”_
 """.trimIndent()
