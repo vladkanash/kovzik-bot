@@ -4,18 +4,19 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.text
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.ParseMode.MARKDOWN_V2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.LocalDate.now
-import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-var date: LocalDate = LocalDate.of(2020, 12, 13)
+var lastMessageDate: LocalDate = LocalDate.of(2020, 12, 13)
+var lastMessage = "Хотя я и щас ничего"
 
 @ExperimentalTime
 fun main() {
@@ -29,7 +30,8 @@ fun main() {
             text {
                 message
                     .takeIf { it.from?.id == kovzikId }
-                    ?.also { date = now() }
+                    ?.also { lastMessageDate = now() }
+                    ?.also { if (it.text != null) lastMessage = it.text!! }
             }
         }
     }
@@ -41,7 +43,8 @@ fun main() {
             launch {
                 bot.sendMessage(
                     ChatId.fromId(chatId.toLong()),
-                    text = getMessage(getDaysPassed(date))
+                    text = getMessage(getDaysPassed(lastMessageDate), lastMessage),
+                    parseMode = MARKDOWN_V2
                 )
             }
             delay(Duration.days(1))
@@ -51,6 +54,7 @@ fun main() {
 
 private fun getDaysPassed(date: LocalDate) = DAYS.between(date, now())
 
-private fun getMessage(days: Long) = """
+private fun getMessage(days: Long, lastMessage: String) = """
     Прошло уже $days дней с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
+    Его последними словами были: *”$lastMessage”*
 """.trimIndent()
