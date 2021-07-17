@@ -4,6 +4,7 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.20'
+    id 'application'
 }
 
 group 'org.vladkanash'
@@ -22,3 +23,7 @@ dependencies {
 
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
+
+application {
+    mainClass = 'org.vladkanash.MainKt'
+}

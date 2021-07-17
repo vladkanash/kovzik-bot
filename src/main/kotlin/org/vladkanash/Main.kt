@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.temporal.ChronoUnit.DAYS
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 var lastMessageDate: LocalDate = LocalDate.of(2020, 12, 13)
@@ -28,8 +28,7 @@ fun main() {
         token = botToken
         dispatch {
             text {
-                message
-                    .takeIf { it.from?.id == kovzikId }
+                message.takeIf { it.from?.id == kovzikId }
                     ?.also { lastMessageDate = now() }
                     ?.also { if (it.text != null) lastMessage = it.text!! }
             }
@@ -47,7 +46,7 @@ fun main() {
                     parseMode = MARKDOWN
                 )
             }
-            delay(Duration.days(1))
+            delay(days(1))
         }
     }
 }
