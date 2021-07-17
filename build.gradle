@@ -1,0 +1,21 @@
+buildscript {
+    ext.kotlin_version = '1.5.20'
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.5.20'
+}
+
+group 'org.vladkanash'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+    implementation 'io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.0.4'
+}
