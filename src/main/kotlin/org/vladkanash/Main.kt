@@ -1,5 +1,6 @@
 package org.vladkanash
 
+import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.text
@@ -9,28 +10,26 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
-import java.time.LocalDate.now
-import java.time.temporal.ChronoUnit.DAYS
+import kotlinx.datetime.*
+import kotlinx.datetime.Instant.Companion.fromEpochMilliseconds
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
-
-var lastMessageDate: LocalDate = LocalDate.of(2020, 12, 13)
-var lastMessage = "Хотя я и щас ничего"
 
 @ExperimentalTime
 fun main() {
     val botToken = System.getenv("TOKEN")
     val kovzikId = System.getenv("KOVZIK_ID").toLong()
-    val chatId = System.getenv("GUMBALL_CHAT_ID")
+    val chatId = System.getenv("GUMBALL_CHAT_ID").toLong()
 
     val bot = bot {
         token = botToken
         dispatch {
             text {
-                message.takeIf { it.from?.id == kovzikId }
-                    ?.also { lastMessageDate = now() }
-                    ?.also { if (it.text != null) lastMessage = it.text!! }
+                if (message.from?.id == kovzikId) {
+                    Message(message.text ?: "", message.date.toLocalDate())
+                        .also(Firebase::updateLastMessage)
+                }
             }
         }
     }
@@ -39,21 +38,31 @@ fun main() {
 
     runBlocking {
         while (isActive) {
-            launch {
-                bot.sendMessage(
-                    ChatId.fromId(chatId.toLong()),
-                    text = getMessage(getDaysPassed(lastMessageDate), lastMessage),
-                    parseMode = MARKDOWN
-                )
-            }
+            launch { sendMessage(bot, chatId) }
             delay(days(1))
         }
     }
 }
 
-private fun getDaysPassed(date: LocalDate) = DAYS.between(date, now())
+private fun sendMessage(bot: Bot, chatId: Long) {
+    bot.sendMessage(
+        ChatId.fromId(chatId),
+        text = composeMessage(),
+        parseMode = MARKDOWN
+    )
+}
 
-private fun getMessage(days: Long, lastMessage: String) = """
+private fun LocalDate.daysUntilNow() = daysUntil(Clock.System.todayAt(currentSystemDefault()))
+
+private fun Long.toLocalDate() = fromEpochMilliseconds(this)
+    .toLocalDateTime(currentSystemDefault()).date
+
+private fun composeMessage(): String =
+    Firebase.getLastMessage()?.let {
+        getMessage(it.date.daysUntilNow(), it.text)
+    } ?: "An error occurred 😥"
+
+private fun getMessage(days: Int, lastMessage: String) = """
     Прошло уже *$days* дней с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
     Его последними словами были: _”$lastMessage”_
 """.trimIndent()
