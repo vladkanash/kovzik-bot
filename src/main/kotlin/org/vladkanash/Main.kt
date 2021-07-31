@@ -6,15 +6,13 @@ import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.text
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.ParseMode.MARKDOWN
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import dev.inmo.krontab.doInfinity
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.*
-import kotlinx.datetime.Instant.Companion.fromEpochMilliseconds
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
-import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
+
+private const val EVERY_DAY_AT_20 = "0 0 20 * *"
 
 @ExperimentalTime
 fun main() {
@@ -27,7 +25,7 @@ fun main() {
         dispatch {
             text {
                 if (message.from?.id == kovzikId) {
-                    Message(message.text ?: "", message.date.toLocalDate())
+                    Message(message.text ?: "", now())
                         .also(Firebase::updateLastMessage)
                 }
             }
@@ -37,9 +35,9 @@ fun main() {
     bot.startPolling()
 
     runBlocking {
-        while (isActive) {
-            launch { sendMessage(bot, chatId) }
-            delay(days(1))
+        doInfinity(EVERY_DAY_AT_20) {
+            println("Sending message to chat...")
+            sendMessage(bot, chatId)
         }
     }
 }
@@ -54,8 +52,7 @@ private fun sendMessage(bot: Bot, chatId: Long) {
 
 private fun LocalDate.daysUntilNow() = daysUntil(Clock.System.todayAt(currentSystemDefault()))
 
-private fun Long.toLocalDate() = fromEpochMilliseconds(this)
-    .toLocalDateTime(currentSystemDefault()).date
+private fun now() = Clock.System.now().toLocalDateTime(currentSystemDefault()).date
 
 private fun composeMessage(): String =
     Firebase.getLastMessage()?.let {
@@ -63,6 +60,12 @@ private fun composeMessage(): String =
     } ?: "An error occurred 😥"
 
 private fun getMessage(days: Int, lastMessage: String) = """
-    Прошло уже *$days* дней с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
+    ${days.toDayString()} с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
     Его последними словами были: _”$lastMessage”_
 """.trimIndent()
+
+private fun Int.toDayString() = when {
+    (this % 10 == 1) -> "Прошел уже *$this* день"
+    (this % 10 in listOf(2, 3, 4)) -> "Прошло уже *$this* дня"
+    else -> "Прошло уже *$this* дней"
+}
