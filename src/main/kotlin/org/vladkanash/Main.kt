@@ -12,6 +12,7 @@ import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import kotlin.time.ExperimentalTime
 
+private const val DAYS_THRESHOLD = 2
 private const val EVERY_DAY_AT_20 = "0 0 20 * *"
 
 @ExperimentalTime
@@ -43,23 +44,29 @@ fun main() {
 }
 
 private fun sendMessage(bot: Bot, chatId: Long) {
-    bot.sendMessage(
-        ChatId.fromId(chatId),
-        text = composeMessage(),
-        parseMode = MARKDOWN
-    )
+    composeMessage()?.also {
+        bot.sendMessage(
+            ChatId.fromId(chatId),
+            text = it,
+            parseMode = MARKDOWN
+        )
+    }
 }
 
 private fun LocalDate.daysUntilNow() = daysUntil(Clock.System.todayAt(currentSystemDefault()))
 
 private fun now() = Clock.System.now().toLocalDateTime(currentSystemDefault()).date
 
-private fun composeMessage(): String =
-    Firebase.getLastMessage()?.let {
-        getMessage(it.date.daysUntilNow(), it.text)
-    } ?: "An error occurred 😥"
+private fun composeMessage(): String? {
+    val message = Firebase.getLastMessage()
+    return when {
+        message == null -> "An error occurred 😥"
+        message.date.daysUntilNow() < DAYS_THRESHOLD -> null
+        else -> getMessageText(message.date.daysUntilNow(), message.text)
+    }
+}
 
-private fun getMessage(days: Int, lastMessage: String) = """
+private fun getMessageText(days: Int, lastMessage: String) = """
     ${days.toDayString()} с тех пор как Николай общался со своими хорошими друзьями в этой конфе :(
     Его последними словами были: _”$lastMessage”_
 """.trimIndent()
