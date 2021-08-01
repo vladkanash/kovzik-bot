@@ -65,7 +65,8 @@ private fun getMessage(days: Int, lastMessage: String) = """
 """.trimIndent()
 
 private fun Int.toDayString() = when {
-    (this % 10 == 1) -> "Прошел уже *$this* день"
-    (this % 10 in listOf(2, 3, 4)) -> "Прошло уже *$this* дня"
+    this in listOf(11, 12, 13, 14) -> "Прошло уже *$this* дней"
+    this % 10 == 1 -> "Прошел уже *$this* день"
+    this % 10 in listOf(2, 3, 4) -> "Прошло уже *$this* дня"
     else -> "Прошло уже *$this* дней"
 }
