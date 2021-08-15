@@ -10,6 +10,7 @@ import com.google.events.cloud.pubsub.v1.Message
 import kotlinx.datetime.*
 import org.vladkanash.repository.Firebase
 
+@Suppress("unused")
 class Publisher : BackgroundFunction<Message> {
 
     override fun accept(payload: Message, context: Context?) {
