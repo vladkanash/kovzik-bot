@@ -1,4 +1,4 @@
-package org.vladkanash
+package org.vladkanash.repository
 
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager

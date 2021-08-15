@@ -1,6 +1,5 @@
 buildscript {
     ext.kotlin_version = '1.5.20'
-    ext.fuel_version = '2.3.1'
 }
 
 plugins {
@@ -16,26 +15,33 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
-
-    implementation 'io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.0.4'
-
-    implementation "com.github.kittinunf.fuel:fuel:$fuel_version"
-    implementation "com.github.kittinunf.fuel:fuel-kotlinx-serialization:$fuel_version"
-    implementation "dev.inmo:krontab:0.6.2"
+configurations {
+    invoker
 }
 
-task stage(dependsOn: ['build', 'clean'])
-build.mustRunAfter clean
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'org.vladkanash.MainKt'
+    runtimeOnly project(':publisher')
+
+    invoker 'com.google.cloud.functions.invoker:java-function-invoker:1.0.0-alpha-2-rc5'
+}
+
+task runFunction(type: JavaExec) {
+    main = 'com.google.cloud.functions.invoker.runner.Invoker'
+    classpath = configurations.invoker
+    inputs.files(configurations.runtimeClasspath, sourceSets.main.output)
+    args(
+            '--target', project.findProperty('run.functionTarget') ?: '',
+            '--port', project.findProperty('run.port') ?: 8080
+    )
+    doFirst {
+        args('--classpath', files(configurations.runtimeClasspath, sourceSets.main.output).asPath)
     }
+}
 
-    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+task deployFunction(type: Exec) {
+    workingDir './'
+    commandLine 'gcloud', 'functions', 'deploy', '--entry-point', 'org.vladkanash.publisher.Publisher'
 }
