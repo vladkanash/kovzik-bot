@@ -1,22 +1,6 @@
-buildscript {
-    ext.kotlin_version = '1.5.20'
-    ext.fuel_version = '2.3.1'
-}
-
-plugins {
-    id 'org.jetbrains.kotlin.jvm'
-}
-
-repositories {
-    mavenCentral()
-    maven { url "https://jitpack.io" }
-}
-
 dependencies {
     implementation project(":repository")
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
     implementation 'io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.0.4'
     implementation 'com.google.cloud.functions:functions-framework-api:1.0.1'
     implementation 'com.google.cloud:google-cloudevent-types:0.3.0'

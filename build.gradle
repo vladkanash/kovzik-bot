@@ -20,12 +20,27 @@ configurations {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
-
     runtimeOnly project(':publisher')
 
     invoker 'com.google.cloud.functions.invoker:java-function-invoker:1.0.0-alpha-2-rc5'
+}
+
+subprojects {
+    apply plugin: "org.jetbrains.kotlin.jvm"
+
+    group = rootProject.group
+    version = rootProject.version
+
+    repositories {
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib"
+        implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
+        implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
+    }
 }
 
 task runFunction(type: JavaExec) {
