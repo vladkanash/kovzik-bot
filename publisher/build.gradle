@@ -21,7 +21,7 @@ task runFunction(type: JavaExec) {
             '--port', project.findProperty('run.port') ?: 8080
     )
     doFirst {
-        args('--classpath', files(configurations.runtimeClasspath, sourceSets.main.output).asPath)
+        args(['--classpath', files(configurations.runtimeClasspath, sourceSets.main.output).asPath])
     }
 }
 
