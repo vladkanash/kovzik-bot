@@ -3,7 +3,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
 }
 
 dependencies {

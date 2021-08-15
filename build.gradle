@@ -4,7 +4,6 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
-    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
 }
 
 group 'org.vladkanash'
@@ -12,7 +11,6 @@ version '0.1.0'
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
 }
 
 configurations {
@@ -21,7 +19,6 @@ configurations {
 
 dependencies {
     runtimeOnly project(':publisher')
-
     invoker 'com.google.cloud.functions.invoker:java-function-invoker:1.0.0-alpha-2-rc5'
 }
 
@@ -58,5 +55,5 @@ task runFunction(type: JavaExec) {
 
 task deployFunction(type: Exec) {
     workingDir './'
-    commandLine 'gcloud', 'functions', 'deploy', '--entry-point', 'org.vladkanash.publisher.Publisher'
+    commandLine 'gcloud', 'functions', "kovzik-bot-publisher" , 'deploy', '--entry-point', 'org.vladkanash.publisher.Publisher'
 }
