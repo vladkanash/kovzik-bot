@@ -47,8 +47,3 @@ task runFunction(type: JavaExec) {
         args(['--classpath', files(configurations.runtimeClasspath, sourceSets.main.output).asPath])
     }
 }
-
-task deployFunction(type: Exec) {
-    workingDir './'
-    commandLine 'cmd', 'gcloud', 'functions', "kovzik-bot-publisher" , 'deploy', '--entry-point', 'org.vladkanash.publisher.Publisher'
-}
