@@ -1,4 +1,4 @@
-package org.vladkanash.publisher
+package org.vladkanash.function
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
