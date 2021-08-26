@@ -8,36 +8,48 @@ import com.github.kittinunf.fuel.serialization.responseObject
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.Result.Failure
 import com.github.kittinunf.result.Result.Success
+import com.google.auth.oauth2.GoogleCredentials
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+private const val ACCESS_TOKEN_PARAM = "access_token"
+
 @Serializable
 data class Message(val text: String, val date: LocalDate)
 
-object Firebase {
+class Firebase {
+
+    private val credentials: GoogleCredentials
 
     init {
         FuelManager.instance.basePath = System.getenv("FIREBASE_URL")
+        credentials = GoogleCredentials.getApplicationDefault().createScoped(
+            listOf("https://www.googleapis.com/auth/firebase.database")
+        )
     }
 
     fun getLastMessage(): Message? {
         val (_, _, result) = "/lastMessage.json"
-            .httpGet()
+            .httpGet(listOf(accessTokenParam()))
             .responseObject<Message>()
 
         return getResponse(result)
     }
 
+    @ExperimentalSerializationApi
     fun updateLastMessage(message: Message): Message? {
         val (_, _, result) = "/lastMessage.json"
-            .httpPut()
+            .httpPut(listOf(accessTokenParam()))
             .body(Json.encodeToString(message))
             .responseObject<Message>()
 
         return getResponse(result)
     }
+
+    private fun accessTokenParam() = ACCESS_TOKEN_PARAM to credentials.refreshAccessToken().tokenValue
 
     private fun getResponse(result: Result<Message, FuelError>) =
         when (result) {

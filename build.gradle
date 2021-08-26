@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.5.20'
+    ext.kotlin_version = '1.5.21'
     ext.fuel_version = '2.3.1'
 }
 
@@ -21,18 +21,30 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.21'
+    implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.2.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2'
+
+    implementation 'com.google.cloud.functions:functions-framework-api:1.0.4'
+    implementation 'com.google.cloud:google-cloudevent-types:0.3.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.1.0'
 
     implementation 'io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.0.4'
-    implementation 'com.google.cloud.functions:functions-framework-api:1.0.1'
-    implementation 'com.google.cloud:google-cloudevent-types:0.3.0'
-
     implementation "com.github.kittinunf.fuel:fuel:$fuel_version"
     implementation "com.github.kittinunf.fuel:fuel-kotlinx-serialization:$fuel_version"
 
-    invoker 'com.google.cloud.functions.invoker:java-function-invoker:1.0.0-alpha-2-rc5'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.5.21'
+    testImplementation 'io.mockk:mockk:1.12.0'
+
+    invoker 'com.google.cloud.functions.invoker:java-function-invoker:1.0.2'
+}
+
+test {
+    useJUnitPlatform()
+    environment "GUMBALL_CHAT_ID", "576473262463"
+    environment "FIREBASE_URL", "test-url"
+    environment "KOVZIK_ID", "test-kovzik-id"
+    environment "TOKEN", "test-token"
 }
 
 task runFunction(type: JavaExec) {

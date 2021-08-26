@@ -11,7 +11,9 @@ import kotlinx.datetime.*
 import org.vladkanash.repository.Firebase
 
 @Suppress("unused")
-class Publisher : BackgroundFunction<Message> {
+class Publisher(
+    private val firebase: Firebase = Firebase()
+) : BackgroundFunction<Message> {
 
     override fun accept(payload: Message, context: Context?) {
         val botToken = System.getenv("TOKEN")
@@ -36,7 +38,7 @@ class Publisher : BackgroundFunction<Message> {
     private fun LocalDate.daysUntilNow() = daysUntil(Clock.System.todayAt(TimeZone.currentSystemDefault()))
 
     private fun composeMessage(): String? {
-        val message = Firebase.getLastMessage()
+        val message = firebase.getLastMessage()
         return when {
             message == null -> "An error occurred 😥"
             message.date.daysUntilNow() < DAYS_THRESHOLD -> null
