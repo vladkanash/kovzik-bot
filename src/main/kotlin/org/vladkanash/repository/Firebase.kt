@@ -27,7 +27,10 @@ class Firebase {
     init {
         FuelManager.instance.basePath = System.getenv("FIREBASE_URL")
         credentials = GoogleCredentials.getApplicationDefault().createScoped(
-            listOf("https://www.googleapis.com/auth/firebase.database")
+            listOf(
+                "https://www.googleapis.com/auth/userinfo.email",
+                "https://www.googleapis.com/auth/firebase.database"
+            )
         )
     }
 
