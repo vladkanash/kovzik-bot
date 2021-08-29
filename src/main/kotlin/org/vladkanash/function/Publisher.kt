@@ -1,6 +1,5 @@
 package org.vladkanash.function
 
-import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.ParseMode
@@ -15,24 +14,20 @@ class Publisher(
     private val firebase: Firebase = Firebase()
 ) : BackgroundFunction<Message> {
 
-    private val bot: Bot = bot {
-        token = System.getenv("TOKEN")
-    }
-
     override fun accept(payload: Message, context: Context?) {
-        val chatId = System.getenv("GUMBALL_CHAT_ID").toLong()
-        bot.sendMessage(chatId)
-        println("Message sent successfully")
-    }
-
-    private fun Bot.sendMessage(chatId: Long) {
         composeMessage()?.also {
-            sendMessage(
+            val chatId = System.getenv("GUMBALL_CHAT_ID").toLong()
+            initBot().sendMessage(
                 ChatId.fromId(chatId),
                 text = it,
                 parseMode = ParseMode.MARKDOWN
             )
+            println("Message sent successfully")
         }
+    }
+
+    private fun initBot() = bot {
+        token = System.getenv("TOKEN")
     }
 
     private fun LocalDate.daysUntilNow() = daysUntil(Clock.System.todayAt(TimeZone.currentSystemDefault()))
