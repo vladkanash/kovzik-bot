@@ -16,6 +16,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private const val ACCESS_TOKEN_PARAM = "access_token"
+private const val LAST_MESSAGE_URI = "/lastMessage.json"
 
 @Serializable
 data class Message(val text: String, val date: LocalDate)
@@ -35,7 +36,7 @@ class Firebase {
     }
 
     fun getLastMessage(): Message? {
-        val (_, _, result) = "/lastMessage.json"
+        val (_, _, result) = LAST_MESSAGE_URI
             .httpGet(listOf(accessTokenParam()))
             .responseObject<Message>()
 
@@ -44,7 +45,7 @@ class Firebase {
 
     @ExperimentalSerializationApi
     fun updateLastMessage(message: Message): Message? {
-        val (_, _, result) = "/lastMessage.json"
+        val (_, _, result) = LAST_MESSAGE_URI
             .httpPut(listOf(accessTokenParam()))
             .body(Json.encodeToString(message))
             .responseObject<Message>()
