@@ -45,7 +45,7 @@ class Updater(
     private fun verifyToken(request: HttpRequest) {
         val requestToken = request.queryParameters["token"].orEmpty().firstOrNull()
         val savedToken = System.getenv("VERIFY_TOKEN")
-        if (requestToken != savedToken) throw IllegalArgumentException()
+        if (savedToken == null || requestToken != savedToken) throw IllegalArgumentException()
     }
 
     private fun today() = now().toLocalDateTime(currentSystemDefault()).date

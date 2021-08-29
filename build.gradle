@@ -43,8 +43,9 @@ test {
     useJUnitPlatform()
     environment "GUMBALL_CHAT_ID", "576473262463"
     environment "FIREBASE_URL", "test-url"
-    environment "KOVZIK_ID", "test-kovzik-id"
+    environment "KOVZIK_ID", "123456789"
     environment "TOKEN", "test-token"
+    environment "VERIFY_TOKEN", "test-verify-token"
 }
 
 task runFunction(type: JavaExec) {

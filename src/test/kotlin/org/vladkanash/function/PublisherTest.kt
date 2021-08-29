@@ -1,18 +1,21 @@
+package org.vladkanash.function
+
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify
-import kotlinx.datetime.*
 import kotlinx.datetime.Clock.System.now
 import kotlinx.datetime.DateTimeUnit.Companion.DAY
 import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
+import kotlinx.datetime.minus
+import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.vladkanash.function.Publisher
 import org.vladkanash.repository.Firebase
 import org.vladkanash.repository.Message
 import com.google.events.cloud.pubsub.v1.Message as PubSubMessage
@@ -24,6 +27,7 @@ internal class PublisherTest {
 
     @MockK
     lateinit var firebase: Firebase
+
     @MockK(relaxed = true)
     lateinit var botMockk: Bot
 
@@ -31,7 +35,6 @@ internal class PublisherTest {
     fun setUp() {
         mockkStatic(::bot)
         every { bot(any()) } returns botMockk
-
         publisher = Publisher(firebase)
     }
 
