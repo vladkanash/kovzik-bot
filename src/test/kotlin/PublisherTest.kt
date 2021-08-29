@@ -29,10 +29,10 @@ internal class PublisherTest {
 
     @BeforeEach
     fun setUp() {
-        publisher = Publisher(firebase)
-
         mockkStatic(::bot)
         every { bot(any()) } returns botMockk
+
+        publisher = Publisher(firebase)
     }
 
     @Test

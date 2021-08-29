@@ -15,19 +15,19 @@ class Publisher(
     private val firebase: Firebase = Firebase()
 ) : BackgroundFunction<Message> {
 
-    override fun accept(payload: Message, context: Context?) {
-        val botToken = System.getenv("TOKEN")
-        val chatId = System.getenv("GUMBALL_CHAT_ID").toLong()
+    private val bot: Bot = bot {
+        token = System.getenv("TOKEN")
+    }
 
-        bot {
-            token = botToken
-        }.also { sendMessage(it, chatId) }
+    override fun accept(payload: Message, context: Context?) {
+        val chatId = System.getenv("GUMBALL_CHAT_ID").toLong()
+        bot.sendMessage(chatId)
         println("Message sent successfully")
     }
 
-    private fun sendMessage(bot: Bot, chatId: Long) {
+    private fun Bot.sendMessage(chatId: Long) {
         composeMessage()?.also {
-            bot.sendMessage(
+            sendMessage(
                 ChatId.fromId(chatId),
                 text = it,
                 parseMode = ParseMode.MARKDOWN
