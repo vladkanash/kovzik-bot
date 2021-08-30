@@ -7,6 +7,7 @@ import com.google.cloud.functions.BackgroundFunction
 import com.google.cloud.functions.Context
 import com.google.events.cloud.pubsub.v1.Message
 import kotlinx.datetime.*
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import org.vladkanash.repository.Firebase
 
 @Suppress("unused")
@@ -30,7 +31,7 @@ class Publisher(
         token = System.getenv("TOKEN")
     }
 
-    private fun LocalDate.daysUntilNow() = daysUntil(Clock.System.todayAt(TimeZone.currentSystemDefault()))
+    private fun LocalDate.daysUntilNow() = daysUntil(Clock.System.todayAt(currentSystemDefault()))
 
     private fun composeMessage(): String? {
         val message = firebase.getLastMessage()
