@@ -38,7 +38,7 @@ class Publisher(
         return when {
             message == null -> "An error occurred 😥"
             message.date.daysUntilNow() < DAYS_THRESHOLD -> null
-            else -> getMessageText(message.date.daysUntilNow(), message.text)
+            else -> getMessageText(message.date.daysUntilNow(), message.text!!)
         }
     }
 

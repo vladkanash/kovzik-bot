@@ -36,7 +36,7 @@ class Updater(
         val kovzikId = System.getenv("KOVZIK_ID").toLong()
         if (update.message?.from?.id == kovzikId) {
             firebase.updateLastMessage(
-                Message(update.message?.text ?: "", today())
+                Message(update.message?.text, today())
             )
             println("Last message updated")
         }
